@@ -1,13 +1,12 @@
 import { constants } from 'flip-toolkit';
-import { createRenderEffect, splitProps, useContext } from 'solid-js';
+import { createRenderEffect, splitProps, useContext, Show } from 'solid-js';
 
 import { FlipContext, PortalContext } from '../Flipper';
-import { Show } from 'solid-js';
 
-import type { Accessor, JSX } from 'solid-js';
 import type { SerializableFlippedProps } from 'flip-toolkit/lib/types';
+import type { Accessor, JSX } from 'solid-js';
 
-type DecisionData<T> = { previous?: T, current?: T };
+type DecisionData<T> = { previous?: T; current?: T };
 type CallbackFlippedProps<T> = {
   onStart?: (element: HTMLElement, decisionData?: DecisionData<T>) => void;
   onStartImmediate?: (element: HTMLElement, decisionData?: DecisionData<T>) => void;
@@ -17,29 +16,28 @@ type CallbackFlippedProps<T> = {
   onExit?: (element: HTMLElement, index: number, removeElement: () => void, decisionData?: DecisionData<T>) => void;
   shouldFlip?: (previousDecisionData: T, currentDecisionData: T) => boolean;
   shouldInvert?: (previousDecisionData: T, currentDecisionData: T) => boolean;
-}
+};
 
-type FlippedProps<T> =
-  & Omit<SerializableFlippedProps, 'children'>
-  & CallbackFlippedProps<T>
-  & { children: (props: Accessor<JSX.HTMLAttributes<HTMLElement>>) => JSX.Element };
+type FlippedProps<T> = Omit<SerializableFlippedProps, 'children'> &
+  CallbackFlippedProps<T> & { children: (props: Accessor<JSX.HTMLAttributes<HTMLElement>>) => JSX.Element };
 
-const FlippedRenderer = <T = unknown>(props: FlippedProps<T>) => {
+const FlippedRenderer = <T = unknown,>(props: FlippedProps<T>) => {
   const isDefaultAnimatedProperty = () => !props.scale && !props.translate && !props.opacity;
-  const dataAttributes = () => ({
-    [constants.DATA_FLIP_CONFIG]: JSON.stringify({
-      ...props, 
-      ...(isDefaultAnimatedProperty() && { scale: true, translate: true, opacity: true }),
-    }),
-    ...(props.flipId && { [constants.DATA_FLIP_ID]: String(props.flipId) }),
-    ...(props.inverseFlipId && { [constants.DATA_INVERSE_FLIP_ID]: String(props.inverseFlipId) }),
-    ...(props.portalKey && { [constants.DATA_PORTAL_KEY]: String(props.portalKey) }),
-  }) as JSX.DataHTMLAttributes<HTMLElement>;
+  const dataAttributes = () =>
+    ({
+      [constants.DATA_FLIP_CONFIG]: JSON.stringify({
+        ...props,
+        ...(isDefaultAnimatedProperty() && { scale: true, translate: true, opacity: true }),
+      }),
+      ...(props.flipId && { [constants.DATA_FLIP_ID]: String(props.flipId) }),
+      ...(props.inverseFlipId && { [constants.DATA_INVERSE_FLIP_ID]: String(props.inverseFlipId) }),
+      ...(props.portalKey && { [constants.DATA_PORTAL_KEY]: String(props.portalKey) }),
+    }) as JSX.DataHTMLAttributes<HTMLElement>;
 
   return <>{props.children(dataAttributes)}</>;
 };
 
-export const Flipped = <T = unknown>(props: FlippedProps<T>) => {
+export const Flipped = <T = unknown,>(props: FlippedProps<T>) => {
   const [, passedProps] = splitProps(props, [
     'children',
     'shouldFlip',
@@ -73,7 +71,7 @@ export const Flipped = <T = unknown>(props: FlippedProps<T>) => {
       onStartImmediate: props.onStartImmediate,
       onComplete: props.onComplete,
       onExit: props.onExit,
-      onSpringUpdate: props.onSpringUpdate
+      onSpringUpdate: props.onSpringUpdate,
     };
 
     return () => {
@@ -84,12 +82,10 @@ export const Flipped = <T = unknown>(props: FlippedProps<T>) => {
   return (
     <Show
       when={() => !props.inverseFlipId}
-      fallback={<FlippedRenderer {...passedProps}>{props.children}</FlippedRenderer>}
-    >
+      fallback={<FlippedRenderer {...passedProps}>{props.children}</FlippedRenderer>}>
       <FlippedRenderer flipId={props.flipId} portalKey={portalKey} {...passedProps}>
         {props.children}
       </FlippedRenderer>
     </Show>
   );
 };
-
