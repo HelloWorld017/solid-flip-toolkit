@@ -18,8 +18,9 @@ type CallbackFlippedProps<T> = {
   shouldInvert?: (previousDecisionData: T, currentDecisionData: T) => boolean;
 };
 
+type PropAttrs = object;
 type FlippedProps<T> = Omit<SerializableFlippedProps, 'children'> &
-  CallbackFlippedProps<T> & { children: (props: Accessor<JSX.HTMLAttributes<HTMLElement>>) => JSX.Element };
+  CallbackFlippedProps<T> & { children: (props: Accessor<PropAttrs>) => JSX.Element };
 
 const FlippedRenderer = <T = unknown,>(props: FlippedProps<T>) => {
   const isDefaultAnimatedProperty = () => !props.scale && !props.translate && !props.opacity;
@@ -32,7 +33,7 @@ const FlippedRenderer = <T = unknown,>(props: FlippedProps<T>) => {
       ...(props.flipId && { [constants.DATA_FLIP_ID]: String(props.flipId) }),
       ...(props.inverseFlipId && { [constants.DATA_INVERSE_FLIP_ID]: String(props.inverseFlipId) }),
       ...(props.portalKey && { [constants.DATA_PORTAL_KEY]: String(props.portalKey) }),
-    }) as JSX.DataHTMLAttributes<HTMLElement>;
+    }) as PropAttrs;
 
   return <>{props.children(dataAttributes)}</>;
 };
@@ -80,9 +81,7 @@ export const Flipped = <T = unknown,>(props: FlippedProps<T>) => {
   });
 
   return (
-    <Show
-      when={() => !props.inverseFlipId}
-      fallback={<FlippedRenderer {...passedProps}>{props.children}</FlippedRenderer>}>
+    <Show when={!props.inverseFlipId} fallback={<FlippedRenderer {...passedProps}>{props.children}</FlippedRenderer>}>
       <FlippedRenderer flipId={props.flipId} portalKey={portalKey} {...passedProps}>
         {props.children}
       </FlippedRenderer>

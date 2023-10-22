@@ -30,9 +30,9 @@ type FlipperProps<T> = {
 };
 
 export const Flipper = <T = unknown,>(props: FlipperProps<T>) => {
-  const FlipperElement = props.element ?? 'div';
-  const elem = (<FlipperElement class={props.class}>{props.children}</FlipperElement>) as HTMLElement;
+  const elem = (<div class={props.class}>{props.children}</div>) as HTMLElement;
 
+  let isInitialized = false;
   let cachedData: CachedData | null = null;
   let lastDecisionData = props.decisionData;
   const flipCallbacks: FlipCallbacks = {};
@@ -42,6 +42,11 @@ export const Flipper = <T = unknown,>(props: FlipperProps<T>) => {
     on(
       () => props.flipKey,
       () => {
+        if (!isInitialized) {
+          isInitialized = true;
+          return;
+        }
+
         if (!elem) {
           return;
         }
@@ -70,7 +75,7 @@ export const Flipper = <T = unknown,>(props: FlipperProps<T>) => {
           containerEl: elem,
           inProgressAnimations,
           flipCallbacks,
-          applyTransformOrigin: props.applyTransformOrigin,
+          applyTransformOrigin: props.applyTransformOrigin ?? true,
           spring: props.spring,
           debug: props.debug,
           portalKey: props.portalKey,
@@ -85,6 +90,7 @@ export const Flipper = <T = unknown,>(props: FlipperProps<T>) => {
         });
 
         lastDecisionData = props.decisionData;
+        cachedData = null;
       },
     ),
   );

@@ -16,12 +16,17 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "solid-flip-toolkit": ["src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "dist"],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    ".eslintrc.cjs"
+    "examples/**/*.ts",
+    "examples/**/*.tsx",
+    "vite.config.ts"
   ]
 }

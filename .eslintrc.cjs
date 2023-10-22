@@ -66,4 +66,9 @@ module.exports = {
     'quote-props': ['error', 'consistent']
   },
   ignorePatterns: ['dist', 'node_modules'],
+  settings: {
+    'import/resolver': {
+      typescript: {}
+    }
+  }
 };
