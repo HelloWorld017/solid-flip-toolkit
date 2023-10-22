@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "allowJs": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "outDir": "dist",
+    "declaration": true,
+    "declarationDir": "dist",
+    "isolatedModules": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "baseUrl": "."
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    ".eslintrc.cjs"
+  ]
+}
